@@ -7,6 +7,7 @@ board = [""] * 9
 difficulty = "hard"  # default
 
 
+# ---------------- GAME LOGIC ----------------
 def check_winner():
     winning_combinations = [
         [0,1,2],[3,4,5],[6,7,8],
@@ -77,6 +78,7 @@ def best_move():
             board[i] = "O"
             score = minimax(board, False)
             board[i] = ""
+
             if score > best_score:
                 best_score = score
                 move = i
@@ -92,7 +94,6 @@ def random_move():
 
 # ---------- MEDIUM ----------
 def medium_move():
-    # 50% smart, 50% random
     if random.random() < 0.5:
         return best_move()
     else:
@@ -109,11 +110,21 @@ def get_computer_move():
         return best_move()
 
 
+# ---------------- ROUTES ----------------
+
+# 🏠 Homepage
 @app.route("/")
-def index():
+def home():
+    return render_template("home.html")
+
+
+# 🎮 Game Page
+@app.route("/tic-tac-toe")
+def tic_tac_toe():
     return render_template("index.html")
 
 
+# 🔧 Set difficulty
 @app.route("/set_difficulty", methods=["POST"])
 def set_difficulty():
     global difficulty
@@ -122,6 +133,7 @@ def set_difficulty():
     return jsonify({"message": f"Difficulty set to {difficulty}"})
 
 
+# 🎮 Move API
 @app.route("/move", methods=["POST"])
 def move():
     data = request.json
@@ -145,6 +157,7 @@ def move():
     return jsonify({"status": "continue", "board": board})
 
 
+# 🔄 Reset API
 @app.route("/reset", methods=["POST"])
 def reset():
     global board
@@ -152,5 +165,6 @@ def reset():
     return jsonify({"board": board})
 
 
+# ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(debug=True)

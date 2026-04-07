@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Portal</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f172a;
+            color: white;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background: #020617;
+            position: fixed;
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #94a3b8;
+            text-decoration: none;
+            margin: 10px 0;
+        }
+
+        .sidebar a:hover {
+            color: white;
+        }
+
+        /* Main */
+        .main {
+            margin-left: 240px;
+            padding: 20px;
+        }
+
+        .header {
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        /* Game Grid */
+        .games {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: linear-gradient(145deg, #1e293b, #020617);
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            background: #334155;
+        }
+
+        .card h3 {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>🎮 Games</h2>
+    <a href="#">Home</a>
+    <a href="#">Popular</a>
+    <a href="#">New</a>
+    <a href="#">Multiplayer</a>
+</div>
+
+<div class="main">
+
+    <div class="header">🔥 Top Games</div>
+
+    <div class="games">
+
+        <!-- Tic Tac Toe -->
+        <div class="card" onclick="openGame('/tic-tac-toe')">
+            <h3>❌⭕ Tic Tac Toe</h3>
+            <p>Play against AI</p>
+        </div>
+
+        <!-- Future Games -->
+        <div class="card">
+            <h3>🐍 Snake (Coming Soon)</h3>
+        </div>
+
+        <div class="card">
+            <h3>🧠 Memory Game (Coming Soon)</h3>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+function openGame(path) {
+    window.location.href = path;
+}
+</script>
+
+</body>
+</html>

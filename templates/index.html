@@ -4,71 +4,147 @@
     <title>Tic Tac Toe</title>
     <style>
         body {
-            font-family: Arial;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+        }
+
+        /* 🔷 Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            font-size: 20px;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .header a {
+            color: #38bdf8;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        /* 🔷 Main Container */
+        .container {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        /* 🔷 Game Card */
+        .game-card {
+            background: rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             text-align: center;
         }
 
+        /* 🎮 Title */
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        /* 🎚 Controls */
+        .controls {
+            margin-bottom: 15px;
+        }
+
+        select {
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: none;
+            background: #1e293b;
+            color: white;
+        }
+
+        /* 📊 Scoreboard */
+        .scoreboard {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        /* 🧩 Board */
         #board {
             display: grid;
             grid-template-columns: repeat(3, 100px);
-            gap: 5px;
+            gap: 12px;
             justify-content: center;
-            margin: 20px;
         }
 
         .cell {
             width: 100px;
             height: 100px;
             font-size: 2em;
-            background: #f0f0f0;
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            transition: 0.2s;
         }
 
         .cell:hover {
-            background: #ddd;
+            transform: scale(1.08);
+            background: #334155;
         }
 
-        .controls {
-            margin-top: 10px;
+        /* ✨ Neon X & O */
+        .cell.X {
+            color: #22c55e;
         }
 
-        .scoreboard {
-            margin-top: 15px;
-            font-size: 18px;
+        .cell.O {
+            color: #ef4444;
         }
     </style>
 </head>
 
 <body>
 
-<h1>Tic Tac Toe</h1>
-
-<div class="controls">
-    <label><b>Difficulty:</b></label>
-    <select onchange="setDifficulty(this.value)">
-        <option value="easy">Easy</option>
-        <option value="medium">Medium</option>
-        <option value="hard" selected>Hard</option>
-    </select>
+<!-- 🔷 HEADER -->
+<div class="header">
+    <div>🎮 Game Portal</div>
+    <a href="/">⬅ Back to Home</a>
 </div>
 
-<!-- 🧾 SCOREBOARD -->
-<div class="scoreboard">
-    🧑 Player (X): <span id="playerScore">0</span> |
-    🤖 Computer (O): <span id="computerScore">0</span> |
-    🤝 Draws: <span id="drawScore">0</span>
-</div>
+<div class="container">
+    <div class="game-card">
 
-<div id="board"></div>
+        <h1>❌⭕ Tic Tac Toe</h1>
+
+        <div class="controls">
+            <label>Difficulty:</label>
+            <select onchange="setDifficulty(this.value)">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard" selected>Hard</option>
+            </select>
+        </div>
+
+        <div class="scoreboard">
+            🧑 Player: <span id="playerScore">0</span> |
+            🤖 Computer: <span id="computerScore">0</span> |
+            🤝 Draws: <span id="drawScore">0</span>
+        </div>
+
+        <div id="board"></div>
+
+    </div>
+</div>
 
 <script>
 let boardDiv = document.getElementById("board");
 let gameOver = false;
 
-// 🔥 Score tracking (session only)
 let playerScore = 0;
 let computerScore = 0;
 let drawScore = 0;
@@ -92,7 +168,6 @@ function createBoard() {
     }
 }
 
-// 🔥 UPDATED: Difficulty change → reset scores + game
 async function setDifficulty(level) {
     await fetch("/set_difficulty", {
         method: "POST",
@@ -100,19 +175,18 @@ async function setDifficulty(level) {
         body: JSON.stringify({level})
     });
 
-    // 🔄 Reset scores
+    // 🔥 Reset scores
     playerScore = 0;
     computerScore = 0;
     drawScore = 0;
     updateScoreboard();
 
-    // 🔄 Reset game board
+    // 🔄 Reset game
     gameOver = true;
     await fetch("/reset", { method: "POST" });
     createBoard();
 }
 
-// 🎮 Player move
 async function makeMove(position) {
     if (gameOver) return;
 
@@ -128,14 +202,9 @@ async function makeMove(position) {
     if (data.status === "win") {
         gameOver = true;
 
-        // 🔥 Update scores
-        if (data.winner === "X") {
-            playerScore++;
-        } else if (data.winner === "O") {
-            computerScore++;
-        } else {
-            drawScore++;
-        }
+        if (data.winner === "X") playerScore++;
+        else if (data.winner === "O") computerScore++;
+        else drawScore++;
 
         updateScoreboard();
 
@@ -147,17 +216,19 @@ async function makeMove(position) {
     }
 }
 
-// 🔄 Update UI
 function updateBoard(board) {
     board.forEach((val, i) => {
         let cell = document.getElementById("cell-" + i);
         if (cell) {
             cell.innerText = val;
+            cell.classList.remove("X", "O");
+
+            if (val === "X") cell.classList.add("X");
+            if (val === "O") cell.classList.add("O");
         }
     });
 }
 
-// 🚀 Initialize
 createBoard();
 updateScoreboard();
 </script>

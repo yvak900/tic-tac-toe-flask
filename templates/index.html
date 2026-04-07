@@ -59,8 +59,55 @@
             cursor: pointer;
         }
 
+        .cell:hover {
+            transform: scale(1.08);
+            background: #334155;
+        }
+
         .cell.X { color: #22c55e; }
         .cell.O { color: #ef4444; }
+
+        .scoreboard {
+            margin-bottom: 20px;
+        }
+
+        select {
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: none;
+            background: #1e293b;
+            color: white;
+        }
+
+        /* 🎉 Modal */
+        #resultModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            padding: 25px 40px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .modal-content button {
+            margin-top: 15px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background: #38bdf8;
+            color: white;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -96,11 +143,19 @@
     </div>
 </div>
 
+<!-- 🎉 Custom Modal -->
+<div id="resultModal">
+    <div class="modal-content">
+        <h2 id="resultText"></h2>
+        <button onclick="closeModal()">OK</button>
+    </div>
+</div>
+
 <script>
 let boardDiv = document.getElementById("board");
 let gameOver = false;
 
-// 🔥 NEW: Board stored in frontend
+// ✅ Frontend state
 let currentBoard = ["","","","","","","","",""];
 
 let playerScore = 0;
@@ -141,7 +196,6 @@ async function setDifficulty(level) {
     updateScoreboard();
 
     gameOver = true;
-    currentBoard = ["","","","","","","","",""];
     createBoard();
 }
 
@@ -153,13 +207,13 @@ async function makeMove(position) {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
             position: position,
-            board: currentBoard   // ✅ send board
+            board: currentBoard
         })
     });
 
     let data = await res.json();
 
-    currentBoard = data.board; // ✅ update board
+    currentBoard = data.board;
     updateBoard(currentBoard);
 
     if (data.status === "win") {
@@ -171,10 +225,10 @@ async function makeMove(position) {
 
         updateScoreboard();
 
-        setTimeout(() => {
-            alert("Winner: " + data.winner);
-            createBoard();
-        }, 200);
+        // 🎉 Show custom popup
+        if (data.winner === "X") showResult("🎉 You Win!");
+        else if (data.winner === "O") showResult("🤖 Computer Wins!");
+        else showResult("🤝 It's a Draw!");
     }
 }
 
@@ -191,6 +245,18 @@ function updateBoard(board) {
     });
 }
 
+// 🎉 Modal Functions
+function showResult(message) {
+    document.getElementById("resultText").innerText = message;
+    document.getElementById("resultModal").style.display = "flex";
+}
+
+function closeModal() {
+    document.getElementById("resultModal").style.display = "none";
+    createBoard();
+}
+
+// Init
 createBoard();
 updateScoreboard();
 </script>

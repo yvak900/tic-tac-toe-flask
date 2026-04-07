@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 5px;
+            justify-content: center;
+            margin: 20px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 2em;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .cell:hover {
+            background: #ddd;
+        }
+
+        .controls {
+            margin-top: 10px;
+        }
+
+        .scoreboard {
+            margin-top: 15px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Tic Tac Toe</h1>
+
+<div class="controls">
+    <label><b>Difficulty:</b></label>
+    <select onchange="setDifficulty(this.value)">
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard" selected>Hard</option>
+    </select>
+</div>
+
+<!-- 🧾 SCOREBOARD -->
+<div class="scoreboard">
+    🧑 Player (X): <span id="playerScore">0</span> |
+    🤖 Computer (O): <span id="computerScore">0</span> |
+    🤝 Draws: <span id="drawScore">0</span>
+</div>
+
+<div id="board"></div>
+
+<script>
+let boardDiv = document.getElementById("board");
+let gameOver = false;
+
+// 🔥 Score tracking (session only)
+let playerScore = 0;
+let computerScore = 0;
+let drawScore = 0;
+
+function updateScoreboard() {
+    document.getElementById("playerScore").innerText = playerScore;
+    document.getElementById("computerScore").innerText = computerScore;
+    document.getElementById("drawScore").innerText = drawScore;
+}
+
+function createBoard() {
+    boardDiv.innerHTML = "";
+    gameOver = false;
+
+    for (let i = 0; i < 9; i++) {
+        let cell = document.createElement("div");
+        cell.className = "cell";
+        cell.id = "cell-" + i;
+        cell.onclick = () => makeMove(i);
+        boardDiv.appendChild(cell);
+    }
+}
+
+// 🔥 UPDATED: Difficulty change → reset scores + game
+async function setDifficulty(level) {
+    await fetch("/set_difficulty", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({level})
+    });
+
+    // 🔄 Reset scores
+    playerScore = 0;
+    computerScore = 0;
+    drawScore = 0;
+    updateScoreboard();
+
+    // 🔄 Reset game board
+    gameOver = true;
+    await fetch("/reset", { method: "POST" });
+    createBoard();
+}
+
+// 🎮 Player move
+async function makeMove(position) {
+    if (gameOver) return;
+
+    let res = await fetch("/move", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({position})
+    });
+
+    let data = await res.json();
+    updateBoard(data.board);
+
+    if (data.status === "win") {
+        gameOver = true;
+
+        // 🔥 Update scores
+        if (data.winner === "X") {
+            playerScore++;
+        } else if (data.winner === "O") {
+            computerScore++;
+        } else {
+            drawScore++;
+        }
+
+        updateScoreboard();
+
+        setTimeout(async () => {
+            alert("Winner: " + data.winner);
+            await fetch("/reset", {method: "POST"});
+            createBoard();
+        }, 200);
+    }
+}
+
+// 🔄 Update UI
+function updateBoard(board) {
+    board.forEach((val, i) => {
+        let cell = document.getElementById("cell-" + i);
+        if (cell) {
+            cell.innerText = val;
+        }
+    });
+}
+
+// 🚀 Initialize
+createBoard();
+updateScoreboard();
+</script>
+
+</body>
+</html>

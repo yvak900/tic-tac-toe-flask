@@ -3,27 +3,10 @@ import random
 
 app = Flask(__name__)
 
-board = [""] * 9
 difficulty = "hard"  # default
 
 
 # ---------------- GAME LOGIC ----------------
-def check_winner():
-    winning_combinations = [
-        [0,1,2],[3,4,5],[6,7,8],
-        [0,3,6],[1,4,7],[2,5,8],
-        [0,4,8],[2,4,6]
-    ]
-    for combo in winning_combinations:
-        a, b, c = combo
-        if board[a] == board[b] == board[c] and board[a] != "":
-            return board[a]
-    if "" not in board:
-        return "Draw"
-    return None
-
-
-# ---------- MINIMAX ----------
 def check_winner_for_board(b):
     winning_combinations = [
         [0,1,2],[3,4,5],[6,7,8],
@@ -39,6 +22,7 @@ def check_winner_for_board(b):
     return None
 
 
+# ---------- MINIMAX ----------
 def minimax(b, is_maximizing):
     result = check_winner_for_board(b)
 
@@ -69,7 +53,7 @@ def minimax(b, is_maximizing):
         return best_score
 
 
-def best_move():
+def best_move_for_board(board):
     best_score = -float("inf")
     move = None
 
@@ -87,44 +71,41 @@ def best_move():
 
 
 # ---------- EASY ----------
-def random_move():
+def random_move_for_board(board):
     empty = [i for i, v in enumerate(board) if v == ""]
     return random.choice(empty) if empty else None
 
 
 # ---------- MEDIUM ----------
-def medium_move():
+def medium_move_for_board(board):
     if random.random() < 0.5:
-        return best_move()
+        return best_move_for_board(board)
     else:
-        return random_move()
+        return random_move_for_board(board)
 
 
 # ---------- DIFFICULTY SWITCH ----------
-def get_computer_move():
+def get_computer_move_for_board(board):
     if difficulty == "easy":
-        return random_move()
+        return random_move_for_board(board)
     elif difficulty == "medium":
-        return medium_move()
+        return medium_move_for_board(board)
     else:
-        return best_move()
+        return best_move_for_board(board)
 
 
 # ---------------- ROUTES ----------------
 
-# 🏠 Homepage
 @app.route("/")
 def home():
     return render_template("home.html")
 
 
-# 🎮 Game Page
 @app.route("/tic-tac-toe")
 def tic_tac_toe():
     return render_template("index.html")
 
 
-# 🔧 Set difficulty
 @app.route("/set_difficulty", methods=["POST"])
 def set_difficulty():
     global difficulty
@@ -133,36 +114,35 @@ def set_difficulty():
     return jsonify({"message": f"Difficulty set to {difficulty}"})
 
 
-# 🎮 Move API
+# 🎮 Move API (STATELESS)
 @app.route("/move", methods=["POST"])
 def move():
     data = request.json
+    board = data["board"]   # ✅ get board from frontend
     position = data["position"]
 
     if board[position] == "":
         board[position] = "X"
 
-        winner = check_winner()
+        winner = check_winner_for_board(board)
         if winner:
             return jsonify({"status": "win", "winner": winner, "board": board})
 
-        comp_pos = get_computer_move()
+        comp_pos = get_computer_move_for_board(board)
         if comp_pos is not None:
             board[comp_pos] = "O"
 
-        winner = check_winner()
+        winner = check_winner_for_board(board)
         if winner:
             return jsonify({"status": "win", "winner": winner, "board": board})
 
     return jsonify({"status": "continue", "board": board})
 
 
-# 🔄 Reset API
+# 🔄 Reset (now optional, frontend handles it)
 @app.route("/reset", methods=["POST"])
 def reset():
-    global board
-    board = [""] * 9
-    return jsonify({"board": board})
+    return jsonify({"board": [""] * 9})
 
 
 # ---------------- RUN ----------------

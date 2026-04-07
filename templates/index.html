@@ -10,7 +10,6 @@
             color: white;
         }
 
-        /* 🔷 Header */
         .header {
             display: flex;
             justify-content: space-between;
@@ -27,18 +26,12 @@
             font-size: 14px;
         }
 
-        .header a:hover {
-            text-decoration: underline;
-        }
-
-        /* 🔷 Main Container */
         .container {
             display: flex;
             justify-content: center;
             margin-top: 40px;
         }
 
-        /* 🔷 Game Card */
         .game-card {
             background: rgba(255,255,255,0.05);
             padding: 30px;
@@ -47,31 +40,6 @@
             text-align: center;
         }
 
-        /* 🎮 Title */
-        h1 {
-            margin-bottom: 10px;
-        }
-
-        /* 🎚 Controls */
-        .controls {
-            margin-bottom: 15px;
-        }
-
-        select {
-            padding: 6px 10px;
-            border-radius: 8px;
-            border: none;
-            background: #1e293b;
-            color: white;
-        }
-
-        /* 📊 Scoreboard */
-        .scoreboard {
-            margin-bottom: 20px;
-            font-size: 16px;
-        }
-
-        /* 🧩 Board */
         #board {
             display: grid;
             grid-template-columns: repeat(3, 100px);
@@ -89,28 +57,15 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: 0.2s;
         }
 
-        .cell:hover {
-            transform: scale(1.08);
-            background: #334155;
-        }
-
-        /* ✨ Neon X & O */
-        .cell.X {
-            color: #22c55e;
-        }
-
-        .cell.O {
-            color: #ef4444;
-        }
+        .cell.X { color: #22c55e; }
+        .cell.O { color: #ef4444; }
     </style>
 </head>
 
 <body>
 
-<!-- 🔷 HEADER -->
 <div class="header">
     <div>🎮 Game Portal</div>
     <a href="/">⬅ Back to Home</a>
@@ -145,6 +100,9 @@
 let boardDiv = document.getElementById("board");
 let gameOver = false;
 
+// 🔥 NEW: Board stored in frontend
+let currentBoard = ["","","","","","","","",""];
+
 let playerScore = 0;
 let computerScore = 0;
 let drawScore = 0;
@@ -166,6 +124,8 @@ function createBoard() {
         cell.onclick = () => makeMove(i);
         boardDiv.appendChild(cell);
     }
+
+    currentBoard = ["","","","","","","","",""];
 }
 
 async function setDifficulty(level) {
@@ -175,15 +135,13 @@ async function setDifficulty(level) {
         body: JSON.stringify({level})
     });
 
-    // 🔥 Reset scores
     playerScore = 0;
     computerScore = 0;
     drawScore = 0;
     updateScoreboard();
 
-    // 🔄 Reset game
     gameOver = true;
-    await fetch("/reset", { method: "POST" });
+    currentBoard = ["","","","","","","","",""];
     createBoard();
 }
 
@@ -193,11 +151,16 @@ async function makeMove(position) {
     let res = await fetch("/move", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({position})
+        body: JSON.stringify({
+            position: position,
+            board: currentBoard   // ✅ send board
+        })
     });
 
     let data = await res.json();
-    updateBoard(data.board);
+
+    currentBoard = data.board; // ✅ update board
+    updateBoard(currentBoard);
 
     if (data.status === "win") {
         gameOver = true;
@@ -208,9 +171,8 @@ async function makeMove(position) {
 
         updateScoreboard();
 
-        setTimeout(async () => {
+        setTimeout(() => {
             alert("Winner: " + data.winner);
-            await fetch("/reset", {method: "POST"});
             createBoard();
         }, 200);
     }

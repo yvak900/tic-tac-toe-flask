@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" role="img" aria-labelledby="title">
+    <title id="title">Cartoon snake</title>
+    <defs>
+        <linearGradient id="body" x1="45" y1="180" x2="155" y2="70" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#57b947"/>
+            <stop offset="1" stop-color="#9ddb61"/>
+        </linearGradient>
+        <linearGradient id="belly" x1="125" y1="81" x2="140" y2="175" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff2a6"/>
+            <stop offset="1" stop-color="#f1c66d"/>
+        </linearGradient>
+    </defs>
+
+    <ellipse cx="109" cy="187" rx="73" ry="20" fill="#000" opacity=".12"/>
+
+    <path d="M63 168c-5-28 19-51 57-43 35 7 52 31 38 50-13 17-48 20-79 12-22-6-29-9-34-20-5-12 9-30 32-34 22-4 43 3 54 15"
+          fill="none" stroke="#459f38" stroke-width="29" stroke-linecap="round"/>
+    <path d="M62 166c-3-22 17-40 50-34 33 6 49 27 38 40-11 13-42 15-69 8-18-5-23-8-26-16-3-8 9-20 27-24 18-3 34 2 43 11"
+          fill="none" stroke="#75c84f" stroke-width="19" stroke-linecap="round"/>
+
+    <path d="M116 73c-17 29-22 74 12 103 24-27 27-74 13-105Z" fill="url(#belly)" stroke="#316d31" stroke-width="3"/>
+    <path d="M125 95h22M122 112h29M121 129h29M126 146h21M135 162h7" stroke="#b8833d" stroke-width="3" stroke-linecap="round"/>
+
+    <path d="M60 72c-3-26 22-47 52-47s55 21 52 47c-2 26-28 43-52 43S63 98 60 72Z"
+          fill="url(#body)" stroke="#2d6d2f" stroke-width="4"/>
+    <path d="M74 46c9-13 24-18 38-11 14-7 29-2 38 11" fill="none" stroke="#66be3f" stroke-width="8" stroke-linecap="round"/>
+
+    <ellipse cx="91" cy="65" rx="17" ry="25" fill="#fff" stroke="#1b1b1b" stroke-width="3"/>
+    <ellipse cx="130" cy="65" rx="17" ry="25" fill="#fff" stroke="#1b1b1b" stroke-width="3"/>
+    <circle cx="96" cy="70" r="9" fill="#111827"/>
+    <circle cx="125" cy="70" r="9" fill="#111827"/>
+    <circle cx="99" cy="64" r="3" fill="#fff"/>
+    <circle cx="128" cy="64" r="3" fill="#fff"/>
+
+    <path d="M89 94c13 9 31 9 45 0" fill="none" stroke="#225522" stroke-width="4" stroke-linecap="round"/>
+    <path d="M126 107c14 7 24 7 36 1" fill="none" stroke="#ed9c76" stroke-width="5" stroke-linecap="round"/>
+    <path d="M158 108l15-8M158 108l14 9" fill="none" stroke="#ef6f62" stroke-width="4" stroke-linecap="round"/>
+
+    <g fill="#3f8f35" opacity=".9">
+        <ellipse cx="75" cy="151" rx="10" ry="7" transform="rotate(-25 75 151)"/>
+        <ellipse cx="95" cy="139" rx="9" ry="6" transform="rotate(25 95 139)"/>
+        <ellipse cx="111" cy="158" rx="11" ry="7" transform="rotate(-12 111 158)"/>
+        <ellipse cx="88" cy="174" rx="10" ry="6" transform="rotate(20 88 174)"/>
+        <ellipse cx="135" cy="177" rx="9" ry="6" transform="rotate(-25 135 177)"/>
+        <ellipse cx="139" cy="148" rx="8" ry="5" transform="rotate(18 139 148)"/>
+    </g>
+</svg>

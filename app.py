@@ -129,6 +129,11 @@ def snake():
     return render_template("snake.html")
 
 
+@app.route("/memory")
+def memory():
+    return render_template("memory.html")
+
+
 # 🔧 Set difficulty
 @app.route("/set_difficulty", methods=["POST"])
 def set_difficulty():
